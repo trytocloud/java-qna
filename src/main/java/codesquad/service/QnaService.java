@@ -40,14 +40,30 @@ public class QnaService {
         return questionRepository.findOne(id);
     }
 
+    @Transactional
     public Question update(User loginUser, long id, Question updatedQuestion) {
-        // TODO 수정 기능 구현
-        return null;
+        Question question = findById(id);
+        if ( !question.isOwner(loginUser)) {
+            throw new IllegalStateException("loginUser is not owner, loginUser=" + loginUser + ", question=" + question);
+        }
+
+        question.updateBy(updatedQuestion);
+        return question;
     }
 
     @Transactional
     public void deleteQuestion(User loginUser, long questionId) throws CannotDeleteException {
-        // TODO 삭제 기능 구현
+        Question question = findById(questionId);
+
+        if (question == null) {
+            throw new CannotDeleteException("questions is not exist");
+        }
+
+        if ( !question.isOwner(loginUser)) {
+            throw new IllegalStateException("loginUser is not owner, loginUser=" + loginUser + ", question=" + question);
+        }
+
+        question.doDelete();
     }
 
     public Iterable<Question> findAll() {
