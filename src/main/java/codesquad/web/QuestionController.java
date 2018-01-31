@@ -3,6 +3,7 @@ package codesquad.web;
 import codesquad.CannotDeleteException;
 import codesquad.domain.Question;
 import codesquad.domain.User;
+import codesquad.dto.QuestionDto;
 import codesquad.security.LoginUser;
 import codesquad.service.QnaService;
 import org.slf4j.Logger;
@@ -39,17 +40,13 @@ public class QuestionController {
 
     @GetMapping("")
     public String list(Model model) {
-        AddQuestions(model, questionService.findAll());
+        model.addAttribute("questions", questionService.findAll());
         return "/qna/show";
-    }
-
-    private void AddQuestions(Model model, Iterable<Question> questions) {
-        model.addAttribute("questions", questions);
     }
 
     @GetMapping("/{id}")
     public String getOne(Model model, @PathVariable long id) {
-        AddQuestions(model, Collections.singletonList(questionService.findById(id)));
+        model.addAttribute("questions", Collections.singletonList(questionService.findById(id)));
         return "/qna/show";
     }
 
@@ -57,23 +54,24 @@ public class QuestionController {
     public String delete(@LoginUser User loginUser, Model model, @PathVariable long id) throws CannotDeleteException {
         questionService.deleteQuestion(loginUser, id);
 
-        AddQuestions(model, questionService.findAll());
+        model.addAttribute("questions", questionService.findAll());
         return "/qna/show";
     }
 
     @GetMapping("/{id}/form")
     public String updateForm(@LoginUser User loginUser, Model model, @PathVariable long id) {
-        AddQuestions(model, Collections.singletonList(questionService.findById(id)));
+        model.addAttribute("question", Collections.singletonList(questionService.findById(id)));
         model.addAttribute("id", id);
         return "/qna/updateForm";
     }
 
-    @PostMapping("/{id}")
-    public String update(@LoginUser User loginUser, Model model, @PathVariable long id, String title, String contents) {
-        Question updatedQuestion = new Question(title, contents);
+    // [NEED TO STUDY] PUT method ? why not return at test?
+    @PutMapping("/{id}")
+    public String update(@LoginUser User loginUser, Model model, @PathVariable long id, QuestionDto questionDto) {
+        Question updatedQuestion = new Question(questionDto.getTitle(), questionDto.getContents());
         questionService.update(loginUser, id, updatedQuestion);
 
-        AddQuestions(model, Collections.singletonList(questionService.findById(id)));
+        model.addAttribute("questions", Collections.singletonList(questionService.findById(id)));
         return "/qna/show";
     }
 }

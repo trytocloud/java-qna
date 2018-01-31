@@ -98,9 +98,10 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     @Test
     public void update() {
         HttpEntity<MultiValueMap<String, Object>> request = makeQuestionRequest("title test", "contents test");
-        ResponseEntity<String> response = basicAuthTemplate(getSANJIGI()).postForEntity("/questions/4", request, String.class);
-        assertThat(response.getStatusCode(), is(HttpStatus.OK));
-        assertThat(response.getBody().contains("title test"), is(true));
+        basicAuthTemplate(getSANJIGI()).put("/questions/4", request, String.class);
+
+        Question question = questionRepository.findOne(4L);
+        assertEquals("title test", question.getTitle());
     }
 
     private User getSANJIGI() {
@@ -110,8 +111,10 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     @Test
     public void updateFailedBecauseOfAnotherUser() {
         HttpEntity<MultiValueMap<String, Object>> request = makeQuestionRequest("title test", "contents test");
-        ResponseEntity<String> response = basicAuthTemplate().postForEntity("/questions/2", request, String.class);
-        assertThat(response.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
+        basicAuthTemplate().put("/questions/2", request, String.class);
+
+        Question question = questionRepository.findOne(2L);
+        assertNotEquals("title test", question.getTitle());
     }
 
     @Test

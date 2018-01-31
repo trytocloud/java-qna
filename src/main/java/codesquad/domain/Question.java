@@ -92,12 +92,20 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         return "Question [id=" + getId() + ", title=" + title + ", contents=" + contents + ", writer=" + writer + "]";
     }
 
-    public void updateBy(Question updatedQuestion) {
+    public void updateBy(Question updatedQuestion, User loginUser) {
+        if ( !this.isOwner(loginUser)) {
+            throw new IllegalStateException("loginUser is not owner, loginUser=" + loginUser + ", question=" + this);
+        }
+
         this.title = updatedQuestion.title;
         this.contents = updatedQuestion.contents;
     }
 
-    public void doDelete() {
+    public void deleteBy(User loginUser) {
+        if ( !this.isOwner(loginUser)) {
+            throw new IllegalStateException("loginUser is not owner, loginUser=" + loginUser + ", question=" + this);
+        }
+
         this.deleted = true;
     }
 }

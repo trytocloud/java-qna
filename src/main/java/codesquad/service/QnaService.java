@@ -43,11 +43,7 @@ public class QnaService {
     @Transactional
     public Question update(User loginUser, long id, Question updatedQuestion) {
         Question question = findById(id);
-        if ( !question.isOwner(loginUser)) {
-            throw new IllegalStateException("loginUser is not owner, loginUser=" + loginUser + ", question=" + question);
-        }
-
-        question.updateBy(updatedQuestion);
+        question.updateBy(updatedQuestion, loginUser);
         return question;
     }
 
@@ -59,11 +55,7 @@ public class QnaService {
             throw new CannotDeleteException("questions is not exist");
         }
 
-        if ( !question.isOwner(loginUser)) {
-            throw new IllegalStateException("loginUser is not owner, loginUser=" + loginUser + ", question=" + question);
-        }
-
-        question.doDelete();
+        question.deleteBy(loginUser);
     }
 
     public Iterable<Question> findAll() {
