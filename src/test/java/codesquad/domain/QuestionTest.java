@@ -9,8 +9,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class QuestionTest {
     private static final String TITLE_TEST = "title test";
     private static final String CONTENTS_TEST = "contents test";
@@ -19,14 +17,11 @@ public class QuestionTest {
     private User userA;
     private User userB;
 
-    @Autowired
-    UserRepository userRepository;
-
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         question = new Question(TITLE_TEST, CONTENTS_TEST);
-        userA = userRepository.findOne(1L);
-        userB = userRepository.findOne(2L);
+        userA = new User("google_id", "passwd1", "google", "google-mail");
+        userB = new User("apple_id", "passwd2", "apple", "apple-mail");
     }
 
     @Test
