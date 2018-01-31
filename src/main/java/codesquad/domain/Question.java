@@ -108,4 +108,8 @@ public class Question extends AbstractEntity implements UrlGeneratable {
 
         this.deleted = true;
     }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
 }
