@@ -116,6 +116,11 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
 
         Question question = questionRepository.findOne(3L);
         assertTrue(question.isDeleted());
+
+        ResponseEntity<String> response = template().getForEntity("/questions/3", String.class);
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        log.debug("body : {}", response.getBody());
+        assertThat(response.getBody().contains("expected delete"), is(false));
     }
 
     @Test

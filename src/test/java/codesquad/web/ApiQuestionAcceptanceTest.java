@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import support.test.AcceptanceTest;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class ApiQuestionAcceptanceTest extends AcceptanceTest {
@@ -55,7 +56,25 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
 
     @Test
     public void delete() {
+        QuestionDto newQuestion = new QuestionDto("title test3", "question test3");
+        String location = createQuestion(newQuestion);
 
+        basicAuthTemplate().delete(location);
+
+        QuestionDto dbQuestion = basicAuthTemplate().getForObject(location, QuestionDto.class);
+        assertNull(dbQuestion);
+    }
+
+    @Test
+    public void deleteFailedBecauseOfNotSameUser() {
+        QuestionDto newQuestion = new QuestionDto("title test4", "question test4");
+        String location = createQuestion(newQuestion);
+
+        basicAuthTemplate(defaultUserAsSANJIGI()).delete(location);
+
+        QuestionDto dbQuestion = basicAuthTemplate().getForObject(location, QuestionDto.class);
+        assertThat(dbQuestion.getTitle(), is(newQuestion.getTitle()));
+        assertThat(dbQuestion.getContents(), is(newQuestion.getContents()));
     }
 }
 

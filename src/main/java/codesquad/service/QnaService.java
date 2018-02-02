@@ -37,7 +37,7 @@ public class QnaService {
     }
 
     public Question findById(long id) {
-        return questionRepository.findOne(id);
+        return questionRepository.findOneByIdAndDeleted(id, false);
     }
 
     @Transactional
