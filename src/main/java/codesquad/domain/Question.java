@@ -49,6 +49,11 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         this.contents = contents;
     }
 
+    public Question(QuestionDto questionDto) {
+        this.title = questionDto.getTitle();
+        this.contents = questionDto.getContents();
+    }
+
     public String getTitle() {
         return title;
     }

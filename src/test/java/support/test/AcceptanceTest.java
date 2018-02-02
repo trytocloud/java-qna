@@ -14,6 +14,7 @@ import codesquad.domain.UserRepository;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public abstract class AcceptanceTest {
     private static final String DEFAULT_LOGIN_USER = "javajigi";
+    private static final String DEFAULT_LOGIN_USER_SAN = "sanjigi";
 
     @Autowired
     private TestRestTemplate template;
@@ -26,18 +27,31 @@ public abstract class AcceptanceTest {
     } 
     
     public TestRestTemplate basicAuthTemplate() {
-        return basicAuthTemplate(defaultUser());
+        return basicAuthTemplate(defaultUser(DEFAULT_LOGIN_USER));
     }
-    
+
+    public TestRestTemplate basicAuthTemplateWithAnotherDefaultUser() {
+        return basicAuthTemplate(defaultUser(DEFAULT_LOGIN_USER_SAN));
+    }
+
+
     public TestRestTemplate basicAuthTemplate(User loginUser) {
         return template.withBasicAuth(loginUser.getUserId(), loginUser.getPassword());
     }
-    
+
     protected User defaultUser() {
-        return findByUserId(DEFAULT_LOGIN_USER);
+        return defaultUser(DEFAULT_LOGIN_USER);
+    }
+
+    protected User defaultUserAsSANJIGI() {
+        return defaultUser(DEFAULT_LOGIN_USER_SAN);
+    }
+
+    private User defaultUser(String userId) {
+        return findByUserId(userId);
     }
     
     protected User findByUserId(String userId) {
-        return userRepository.findByUserId(userId).get();
+        return userRepository.findByUserId(userId).orElseThrow(IllegalArgumentException::new);
     }
 }
