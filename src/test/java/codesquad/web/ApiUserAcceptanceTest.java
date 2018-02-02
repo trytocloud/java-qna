@@ -23,9 +23,7 @@ public class ApiUserAcceptanceTest extends AcceptanceTest {
     }
 
     private String createUser(UserDto newUser) {
-        ResponseEntity<String> response = template().postForEntity("/api/users", newUser, String.class);
-        assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
-        return response.getHeaders().getLocation().getPath();
+        return createResource("/api/users", newUser);
     }
 
     @Test

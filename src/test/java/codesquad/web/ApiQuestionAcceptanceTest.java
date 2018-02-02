@@ -2,8 +2,6 @@ package codesquad.web;
 
 import codesquad.dto.QuestionDto;
 import org.junit.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import support.test.AcceptanceTest;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -17,15 +15,13 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
         QuestionDto newQuestion = new QuestionDto("title test", "question test");
         String location = createQuestion(newQuestion);
 
-        QuestionDto dbQuestion = basicAuthTemplate().getForObject(location, QuestionDto.class);
+        QuestionDto dbQuestion = getResource(location, QuestionDto.class);
         assertThat(dbQuestion.getTitle(), is(newQuestion.getTitle()));
         assertThat(dbQuestion.getContents(), is(newQuestion.getContents()));
     }
 
     private String createQuestion(QuestionDto newQuestion) {
-        ResponseEntity<String> response = basicAuthTemplate().postForEntity("/api/questions", newQuestion, String.class);
-        assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
-        return response.getHeaders().getLocation().getPath();
+        return createResource("/api/questions", newQuestion);
     }
 
     @Test
@@ -36,7 +32,7 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
         QuestionDto updatedQuestion = new QuestionDto("updated title test2", "updated question test2");
         basicAuthTemplate().put(location, updatedQuestion);
 
-        QuestionDto dbQuestion = basicAuthTemplate().getForObject(location, QuestionDto.class);
+        QuestionDto dbQuestion = getResource(location, QuestionDto.class);
         assertThat(dbQuestion.getTitle(), is(updatedQuestion.getTitle()));
         assertThat(dbQuestion.getContents(), is(updatedQuestion.getContents()));
     }
@@ -49,7 +45,7 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
         QuestionDto updatedQuestion = new QuestionDto("updated title test2", "updated question test2");
         basicAuthTemplate(defaultUserAsSANJIGI()).put(location, updatedQuestion);
 
-        QuestionDto dbQuestion = basicAuthTemplate().getForObject(location, QuestionDto.class);
+        QuestionDto dbQuestion = getResource(location, QuestionDto.class);
         assertThat(dbQuestion.getTitle(), is(newQuestion.getTitle()));
         assertThat(dbQuestion.getContents(), is(newQuestion.getContents()));
     }
@@ -61,7 +57,7 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
 
         basicAuthTemplate().delete(location);
 
-        QuestionDto dbQuestion = basicAuthTemplate().getForObject(location, QuestionDto.class);
+        QuestionDto dbQuestion = getResource(location, QuestionDto.class);
         assertNull(dbQuestion);
     }
 
@@ -72,7 +68,7 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
 
         basicAuthTemplate(defaultUserAsSANJIGI()).delete(location);
 
-        QuestionDto dbQuestion = basicAuthTemplate().getForObject(location, QuestionDto.class);
+        QuestionDto dbQuestion = getResource(location, QuestionDto.class);
         assertThat(dbQuestion.getTitle(), is(newQuestion.getTitle()));
         assertThat(dbQuestion.getContents(), is(newQuestion.getContents()));
     }

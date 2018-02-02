@@ -1,13 +1,8 @@
 package codesquad.web;
 
 import codesquad.dto.AnswerDto;
-import codesquad.dto.AnswerDto;
 import org.junit.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import support.test.AcceptanceTest;
-
-import java.net.URI;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNull;
@@ -20,14 +15,12 @@ public class ApiAnswerAcceptanceTest extends AcceptanceTest {
         AnswerDto newAnswer = new AnswerDto("answer test");
         String location = createAnswer(newAnswer);
 
-        AnswerDto dbAnswer = basicAuthTemplate().getForObject(location, AnswerDto.class);
+        AnswerDto dbAnswer = getResource(location, AnswerDto.class);
         assertThat(dbAnswer.getContents(), is(newAnswer.getContents()));
     }
 
     private String createAnswer(AnswerDto newAnswer) {
-        ResponseEntity<String> response = basicAuthTemplate().postForEntity("/api/questions/1/answers", newAnswer, String.class);
-        assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
-        return response.getHeaders().getLocation().getPath();
+        return createResource("/api/questions/1/answers", newAnswer);
     }
 
     @Test
@@ -38,7 +31,7 @@ public class ApiAnswerAcceptanceTest extends AcceptanceTest {
         AnswerDto updatedAnswer = new AnswerDto("updated answer test2");
         basicAuthTemplate().put(location, updatedAnswer);
 
-        AnswerDto dbAnswer = basicAuthTemplate().getForObject(location, AnswerDto.class);
+        AnswerDto dbAnswer = getResource(location, AnswerDto.class);
         assertThat(dbAnswer.getContents(), is(updatedAnswer.getContents()));
     }
 
@@ -50,7 +43,7 @@ public class ApiAnswerAcceptanceTest extends AcceptanceTest {
         AnswerDto updatedAnswer = new AnswerDto("updated answer test2");
         basicAuthTemplate(defaultUserAsSANJIGI()).put(location, updatedAnswer);
 
-        AnswerDto dbAnswer = basicAuthTemplate().getForObject(location, AnswerDto.class);
+        AnswerDto dbAnswer = getResource(location, AnswerDto.class);
         assertThat(dbAnswer.getContents(), is(newAnswer.getContents()));
     }
 
@@ -61,7 +54,7 @@ public class ApiAnswerAcceptanceTest extends AcceptanceTest {
 
         basicAuthTemplate().delete(location);
 
-        AnswerDto dbAnswer = basicAuthTemplate().getForObject(location, AnswerDto.class);
+        AnswerDto dbAnswer = getResource(location, AnswerDto.class);
         assertNull(dbAnswer);
     }
 
@@ -72,7 +65,7 @@ public class ApiAnswerAcceptanceTest extends AcceptanceTest {
 
         basicAuthTemplate(defaultUserAsSANJIGI()).delete(location);
 
-        AnswerDto dbAnswer = basicAuthTemplate().getForObject(location, AnswerDto.class);
+        AnswerDto dbAnswer = getResource(location, AnswerDto.class);
         assertThat(dbAnswer.getContents(), is(newAnswer.getContents()));
     }
 }
