@@ -117,4 +117,19 @@ public class Question extends AbstractEntity implements UrlGeneratable {
     public List<Answer> getAnswers() {
         return answers;
     }
+
+    public Answer findAnswer(long answerId) {
+        List<Answer> answers = getAnswers();
+        for (Answer answer : answers) {
+            if (answer.getId() == answerId) {
+                return answer;
+            }
+        }
+
+        return null;
+    }
+
+    public int getAnswersCount() {
+        return answers.size();
+    }
 }
