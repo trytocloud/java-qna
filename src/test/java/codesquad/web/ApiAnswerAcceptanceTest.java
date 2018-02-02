@@ -44,7 +44,7 @@ public class ApiAnswerAcceptanceTest extends AcceptanceTest {
         basicAuthTemplate(defaultUserAsSANJIGI()).put(location, updatedAnswer);
 
         AnswerDto dbAnswer = getResource(location, AnswerDto.class);
-        assertThat(dbAnswer.getContents(), is(newAnswer.getContents()));
+        assertThat(dbAnswer, is(newAnswer));
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ApiAnswerAcceptanceTest extends AcceptanceTest {
         basicAuthTemplate(defaultUserAsSANJIGI()).delete(location);
 
         AnswerDto dbAnswer = getResource(location, AnswerDto.class);
-        assertThat(dbAnswer.getContents(), is(newAnswer.getContents()));
+        assertThat(dbAnswer, is(newAnswer));
     }
 }
 

@@ -30,10 +30,7 @@ public class ApiAnswerController {
     @PostMapping("")
     public ResponseEntity<Void> create(@PathVariable long questionId, @LoginUser User loginUser, @Valid @RequestBody AnswerDto answerDto) {
         Answer savedAnswer = qnaService.addAnswer(loginUser, questionId, answerDto.getContents());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/api/questions/" + questionId + "/answers/" + savedAnswer.getId()));
-        return new ResponseEntity<>(headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(ApiHeaderGenerator.generateApiHeader(savedAnswer), HttpStatus.CREATED);
     }
 
     @GetMapping("{answerId}")

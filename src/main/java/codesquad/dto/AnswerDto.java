@@ -1,6 +1,7 @@
 package codesquad.dto;
 
 import javax.validation.constraints.Size;
+import java.util.Objects;
 
 public class AnswerDto {
     private long id;
@@ -36,5 +37,19 @@ public class AnswerDto {
     public AnswerDto setContents(String contents) {
         this.contents = contents;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AnswerDto answerDto = (AnswerDto) o;
+        return Objects.equals(contents, answerDto.contents);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(contents);
     }
 }

@@ -16,8 +16,7 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
         String location = createQuestion(newQuestion);
 
         QuestionDto dbQuestion = getResource(location, QuestionDto.class);
-        assertThat(dbQuestion.getTitle(), is(newQuestion.getTitle()));
-        assertThat(dbQuestion.getContents(), is(newQuestion.getContents()));
+        assertThat(dbQuestion, is(newQuestion));
     }
 
     private String createQuestion(QuestionDto newQuestion) {
@@ -33,8 +32,7 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
         basicAuthTemplate().put(location, updatedQuestion);
 
         QuestionDto dbQuestion = getResource(location, QuestionDto.class);
-        assertThat(dbQuestion.getTitle(), is(updatedQuestion.getTitle()));
-        assertThat(dbQuestion.getContents(), is(updatedQuestion.getContents()));
+        assertThat(dbQuestion, is(updatedQuestion));
     }
 
     @Test
@@ -46,8 +44,7 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
         basicAuthTemplate(defaultUserAsSANJIGI()).put(location, updatedQuestion);
 
         QuestionDto dbQuestion = getResource(location, QuestionDto.class);
-        assertThat(dbQuestion.getTitle(), is(newQuestion.getTitle()));
-        assertThat(dbQuestion.getContents(), is(newQuestion.getContents()));
+        assertThat(dbQuestion, is(newQuestion));
     }
 
     @Test
@@ -69,8 +66,7 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
         basicAuthTemplate(defaultUserAsSANJIGI()).delete(location);
 
         QuestionDto dbQuestion = getResource(location, QuestionDto.class);
-        assertThat(dbQuestion.getTitle(), is(newQuestion.getTitle()));
-        assertThat(dbQuestion.getContents(), is(newQuestion.getContents()));
+        assertThat(dbQuestion, is(newQuestion));
     }
 }
 
