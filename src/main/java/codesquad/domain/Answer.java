@@ -101,9 +101,11 @@ public class Answer extends AbstractEntity implements UrlGeneratable {
         }
     }
 
-    public void deleteBy(User loginUser, long questionId) {
+    public DeleteHistory deleteBy(User loginUser, long questionId) {
         validate(loginUser, questionId);
 
         this.deleted = true;
+
+        return new DeleteHistory(ContentType.ANSWER, getId(), loginUser);
     }
 }

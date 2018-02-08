@@ -2,6 +2,7 @@ package codesquad.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,6 +18,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Where;
 
 import codesquad.dto.QuestionDto;
+import org.hibernate.sql.Delete;
 import support.domain.AbstractEntity;
 import support.domain.UrlGeneratable;
 
@@ -106,12 +108,21 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         this.contents = updatedQuestion.contents;
     }
 
-    public void deleteBy(User loginUser) {
+    public List<DeleteHistory> deleteBy(User loginUser) {
         if ( !this.isOwner(loginUser)) {
-            throw new IllegalStateException("loginUser is not owner, loginUser=" + loginUser + ", question=" + this);
+            throw new IllegalStateException("loginUser is not owner of question, loginUser=" + loginUser + ", question=" + this);
         }
 
+        if (answers.stream().anyMatch(answer -> !isOwner(loginUser))) {
+            throw new IllegalStateException("loginUser is not owner of answers, loginUser=" + loginUser + ", question=" + this);
+        }
+
+        List<DeleteHistory> histories = answers.stream().map(answer -> answer.deleteBy(loginUser, getId())).collect(Collectors.toList());
+
         this.deleted = true;
+        histories.add(new DeleteHistory(ContentType.QUESTION, getId(), loginUser));
+
+        return histories;
     }
 
     public List<Answer> getAnswers() {
