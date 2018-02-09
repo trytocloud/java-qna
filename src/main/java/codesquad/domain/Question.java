@@ -4,15 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Where;
@@ -36,10 +28,8 @@ public class Question extends AbstractEntity implements UrlGeneratable {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-    @Where(clause = "deleted = false")
-    @OrderBy("id ASC")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     private boolean deleted = false;
 
@@ -113,11 +103,7 @@ public class Question extends AbstractEntity implements UrlGeneratable {
             throw new IllegalStateException("loginUser is not owner of question, loginUser=" + loginUser + ", question=" + this);
         }
 
-        if (answers.stream().anyMatch(answer -> !isOwner(loginUser))) {
-            throw new IllegalStateException("loginUser is not owner of answers, loginUser=" + loginUser + ", question=" + this);
-        }
-
-        List<DeleteHistory> histories = answers.stream().map(answer -> answer.deleteBy(loginUser, getId())).collect(Collectors.toList());
+        List<DeleteHistory> histories = answers.deleteBy(loginUser, getId());
 
         this.deleted = true;
         histories.add(new DeleteHistory(ContentType.QUESTION, getId(), loginUser));
@@ -125,22 +111,11 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         return histories;
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
-    }
-
     public Answer findAnswer(long answerId) {
-        List<Answer> answers = getAnswers();
-        for (Answer answer : answers) {
-            if (answer.getId() == answerId) {
-                return answer;
-            }
-        }
-
-        return null;
+        return answers.findAnswer(answerId);
     }
 
     public int getAnswersCount() {
-        return answers.size();
+        return answers.count();
     }
 }
